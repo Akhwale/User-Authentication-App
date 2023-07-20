@@ -7,54 +7,47 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-
+const flash = require('connect-flash');
 
 const app = express();
 const port = process.env.PORT;
 const uri = process.env.ATLAS_URI;
 app.use(cors(), express.json());
 
+app.use(
+  session({
+    secret: 'my-secret-key',
+    resave: true,
+    saveUninitialized: true
+  })
+);
 
-
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false
-}));
-
-
-
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-
-
 const User = require('./models/user.model');
 
-
 passport.use(
-  new LocalStrategy((username, password, done)=>{
-    User.findOne({userName:username}, (err, user)=>{
-      if(err){
-        return done(err);
-      }
-      if (!user){
-        return done(null, false, {message: 'Incorrect username.'});
-      }
-      
-      bcrypt.compare(password, user.password, (err, result)=>{
-        if(result){
-          return done(null, user);
-        }
-        else{
-          return done(null, false, {message: "Wrog password"})
+  new LocalStrategy({ usernameField: 'userName' }, (username, password, done) => {
+    User.findOne({ userName: username })
+      .then(user => {
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
         }
 
+        bcrypt.compare(password, user.password)
+          .then(isMatch => {
+            if (isMatch) {
+              return done(null, user);
+            } else {
+              return done(null, false, { message: 'Wrong password.' });
+            }
+          })
+          .catch(err => done(err));
       })
-
-    });
+      .catch(err => done(err));
   })
 );
 
@@ -63,9 +56,11 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
+  User.findById(id)
+    .then(user => {
+      done(null, user);
+    })
+    .catch(err => done(err));
 });
 
 

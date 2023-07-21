@@ -6,7 +6,7 @@ const passport = require('passport');
 
 // add user
 router.route('/add').post((req, res) => {
-  const userName = req.body.userName;
+  const username = req.body.username;
   const password = req.body.password;
 
   bcrypt.hash(password, 10, (err, hashedPassword) => {
@@ -15,7 +15,7 @@ router.route('/add').post((req, res) => {
     }
 
     const newUser = new User({
-      userName,
+      username,
       password: hashedPassword,
     });
 
@@ -29,58 +29,58 @@ router.route('/add').post((req, res) => {
 
 // Login Route
 
-// router.route('/login').post((req, res, next) => {
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (!user) {
-//       return res.status(401).json( 'Incorrect username or password.');
-//     }
-//     req.logIn(user, function (err) {
-//       if (err) {
-//         return next(err);
-//       }
-//       req.flash('success', 'Login successful!');
-//       return res.json('User authenticated successfully');
-         
-//     });
-//   })(req, res, next);
-// });
-
-
-function errorHandler(err, req, res, next) {
-  console.error(err.stack); // Log the error for debugging purposes
-
-  // Determine the status code and error message based on the error type
-  let statusCode = err.status || 500;
-  let errorMessage = err.message || 'Internal Server Error';
-
-  // Send the error response in JSON format
-  res.status(statusCode).json({ error: errorMessage });
-}
-
-// Login route
 router.route('/login').post((req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
-      return next(err); // Pass the error to the error-handling middleware
+      return next(err);
     }
     if (!user) {
-      return next({ status: 401, message: 'Incorrect username or password.' });
+      return res.status(401).json( 'Incorrect username or password.');
     }
     req.logIn(user, function (err) {
       if (err) {
-        return next(err); // Pass the error to the error-handling middleware
+        return next(err);
       }
       req.flash('success', 'Login successful!');
-      return res.json({ message: 'User authenticated successfully' });
+      return res.json('User authenticated successfully');
+         
     });
   })(req, res, next);
 });
 
-// Error-handling middleware (Should be placed after all routes and middlewares)
-router.use(errorHandler);
+
+// function errorHandler(err, req, res, next) {
+//   console.error(err.stack); // Log the error for debugging purposes
+
+//   // Determine the status code and error message based on the error type
+//   let statusCode = err.status || 500;
+//   let errorMessage = err.message || 'Internal Server Error';
+
+//   // Send the error response in JSON format
+//   res.status(statusCode).json({ error: errorMessage });
+// }
+
+// Login route
+// router.route('/login').post((req, res, next) => {
+//   passport.authenticate('local', (err, user, info) => {
+//     if (err) {
+//       return next(err); // Pass the error to the error-handling middleware
+//     }
+//     if (!user) {
+//       return next({ status: 401, message: 'Incorrect username or password.' });
+//     }
+//     req.logIn(user, function (err) {
+//       if (err) {
+//         return next(err); // Pass the error to the error-handling middleware
+//       }
+//       req.flash('success', 'Login successful!');
+//       return res.json({ message: 'User authenticated successfully' });
+//     });
+//   })(req, res, next);
+// });
+
+// // Error-handling middleware (Should be placed after all routes and middlewares)
+// router.use(errorHandler);
 
 
 

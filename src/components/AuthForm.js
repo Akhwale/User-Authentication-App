@@ -25,7 +25,22 @@ export default function AuthForm(){
 // Handle the form submission based on the formMode (signup or login)
 if (isLoginMode) {
     
-    console.log("isLoggn=ing mode");
+    console.log("isLoggning mode");
+
+       axios.post('http://localhost:5000/user/login', formData) // Replace with your server URL
+    .then(response => {
+      
+      setUsername('');
+      setPassword('');
+      // setResponseMessage(response.data);
+      window.location = `/dashboard?username=${username}`;
+      //This response comes from the server when the request is sent
+    })
+    .catch(error => {
+      console.error(error); // Handle any errors
+    });
+
+
 
    
 

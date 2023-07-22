@@ -30,8 +30,8 @@ app.use(passport.session());
 const User = require('./models/user.model');
 
 passport.use(
-  new LocalStrategy({ usernameField: 'userName' }, (username, password, done) => {
-    User.findOne({ userName: username })
+  new LocalStrategy({ usernameField: 'username' }, (username, password, done) => {
+    User.findOne({ username: username })
       .then(user => {
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });

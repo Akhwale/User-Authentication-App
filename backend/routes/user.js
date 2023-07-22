@@ -29,24 +29,24 @@ router.route('/add').post((req, res) => {
 
 // Login Route
 
-router.route('/login').post((req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(401).json( 'Incorrect username or password.');
-    }
-    req.logIn(user, function (err) {
-      if (err) {
-        return next(err);
-      }
-      req.flash('success', 'Login successful!');
-      return res.json('User authenticated successfully');
+// router.route('/login').post((req, res, next) => {
+//   passport.authenticate('local', (err, user, info) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     if (!user) {
+//       return res.status(401).json( 'Incorrect username or password.');
+//     }
+//     req.logIn(user, function (err) {
+//       if (err) {
+//         return next(err);
+//       }
+//       req.flash('success', 'Login successful!');
+//       return res.json('User authenticated successfully');
          
-    });
-  })(req, res, next);
-});
+//     });
+//   })(req, res, next);
+// });
 
 
 // function errorHandler(err, req, res, next) {
@@ -61,25 +61,26 @@ router.route('/login').post((req, res, next) => {
 // }
 
 // Login route
-// router.route('/login').post((req, res, next) => {
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) {
-//       return next(err); // Pass the error to the error-handling middleware
-//     }
-//     if (!user) {
-//       return next({ status: 401, message: 'Incorrect username or password.' });
-//     }
-//     req.logIn(user, function (err) {
-//       if (err) {
-//         return next(err); // Pass the error to the error-handling middleware
-//       }
-//       req.flash('success', 'Login successful!');
-//       return res.json({ message: 'User authenticated successfully' });
-//     });
-//   })(req, res, next);
-// });
 
-// // Error-handling middleware (Should be placed after all routes and middlewares)
+router.route('/login').post((req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err); // Pass the error to the error-handling middleware
+    }
+    if (!user) {
+      return next({ status: 401, message: 'Incorrect username or password.' });
+    }
+    req.logIn(user, function (err) {
+      if (err) {
+        return next(err); // Pass the error to the error-handling middleware
+      }
+      req.flash('success', 'Login successful!');
+      return res.json({ message: 'User authenticated successfully' });
+    });
+  })(req, res, next);
+});
+
+// Error-handling middleware (Should be placed after all routes and middlewares)
 // router.use(errorHandler);
 
 
